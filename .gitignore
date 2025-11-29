@@ -6,6 +6,7 @@ node_modules/
 
 # Fresh build output
 _fresh/
+fresh.gen.ts
 
 # Drizzle
 drizzle/
