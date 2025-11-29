@@ -25,6 +25,7 @@
     "@/": "./",
     "@fresh/core": "jsr:@fresh/core@^2.2.0",
     "@fresh/core/dev": "jsr:@fresh/core@^2.2.0/dev",
+    "@fresh/plugin-tailwind": "jsr:@fresh/plugin-tailwind@^1.0.0",
     "preact": "npm:preact@^10.27.2",
     "preact/jsx-runtime": "npm:preact@^10.27.2/jsx-runtime",
     "preact/hooks": "npm:preact@^10.27.2/hooks",
