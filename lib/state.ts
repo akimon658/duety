@@ -1,5 +1,5 @@
-import type { User } from "@/db/schema.ts";
+import { User } from "@/db/schema.ts"
 
 export interface State {
-  user?: User;
+  user: User
 }

@@ -1,23 +1,13 @@
-# Environment
+# dotenv environment variable files
 .env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
 
-# Node modules (only used for drizzle-kit)
-node_modules/
-
-# Fresh build output
+# Fresh build directory
 _fresh/
-fresh.gen.ts
+# npm + other dependencies
+node_modules/
+vendor/
 
-# Drizzle
-drizzle/
-
-# IDE
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log

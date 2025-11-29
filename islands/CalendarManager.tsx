@@ -1,40 +1,39 @@
-import { useSignal } from "@preact/signals";
+import { useSignal } from "@preact/signals"
 
 interface Calendar {
-  id: string;
-  url: string;
-  name: string | null;
+  id: string
+  url: string
+  name?: string
 }
 
 interface Props {
-  initialCalendars: Calendar[];
+  initialCalendars: Calendar[]
 }
 
-export default function CalendarManager({ initialCalendars }: Props) {
-  const calendars = useSignal<Calendar[]>(initialCalendars);
-  const newUrl = useSignal("");
-  const newName = useSignal("");
-  const isLoading = useSignal(false);
-  const error = useSignal("");
+export const CalendarManager = ({ initialCalendars }: Props) => {
+  const calendars = useSignal<Calendar[]>(initialCalendars)
+  const newUrl = useSignal("")
+  const newName = useSignal("")
+  const isLoading = useSignal(false)
+  const error = useSignal("")
 
   const handleAddCalendar = async (e: Event) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!newUrl.value.trim()) {
-      error.value = "URLを入力してください";
-      return;
+      error.value = "URLを入力してください"
+      return
     }
 
-    // Basic URL validation
     try {
-      new URL(newUrl.value);
+      new URL(newUrl.value)
     } catch {
-      error.value = "有効なURLを入力してください";
-      return;
+      error.value = "有効なURLを入力してください"
+      return
     }
 
-    isLoading.value = true;
-    error.value = "";
+    isLoading.value = true
+    error.value = ""
 
     try {
       const response = await fetch("/api/calendars", {
@@ -46,52 +45,51 @@ export default function CalendarManager({ initialCalendars }: Props) {
           url: newUrl.value,
           name: newName.value || null,
         }),
-      });
+      })
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "カレンダーの追加に失敗しました");
+        const data = await response.json()
+        throw new Error(data.error || "カレンダーの追加に失敗しました")
       }
 
-      const newCalendar = await response.json();
-      calendars.value = [...calendars.value, newCalendar];
-      newUrl.value = "";
-      newName.value = "";
+      const newCalendar = await response.json()
+      calendars.value = [...calendars.value, newCalendar]
+      newUrl.value = ""
+      newName.value = ""
     } catch (err) {
-      error.value = err instanceof Error ? err.message : "エラーが発生しました";
+      error.value = err instanceof Error ? err.message : "エラーが発生しました"
     } finally {
-      isLoading.value = false;
+      isLoading.value = false
     }
-  };
+  }
 
   const handleDeleteCalendar = async (id: string) => {
     if (!confirm("このカレンダーを削除しますか？")) {
-      return;
+      return
     }
 
-    isLoading.value = true;
-    error.value = "";
+    isLoading.value = true
+    error.value = ""
 
     try {
       const response = await fetch(`/api/calendars/${id}`, {
         method: "DELETE",
-      });
+      })
 
       if (!response.ok && response.status !== 204) {
-        throw new Error("カレンダーの削除に失敗しました");
+        throw new Error("カレンダーの削除に失敗しました")
       }
 
-      calendars.value = calendars.value.filter((c) => c.id !== id);
+      calendars.value = calendars.value.filter((c) => c.id !== id)
     } catch (err) {
-      error.value = err instanceof Error ? err.message : "エラーが発生しました";
+      error.value = err instanceof Error ? err.message : "エラーが発生しました"
     } finally {
-      isLoading.value = false;
+      isLoading.value = false
     }
-  };
+  }
 
   return (
     <div>
-      {/* Add Calendar Form */}
       <form onSubmit={handleAddCalendar} class="space-y-4">
         <div class="form-control w-full">
           <label class="label" htmlFor="url">
@@ -156,7 +154,6 @@ export default function CalendarManager({ initialCalendars }: Props) {
 
       <div class="divider"></div>
 
-      {/* Calendar List */}
       <div>
         <h3 class="text-lg font-semibold mb-3">登録済みカレンダー</h3>
 
@@ -207,5 +204,5 @@ export default function CalendarManager({ initialCalendars }: Props) {
           )}
       </div>
     </div>
-  );
+  )
 }

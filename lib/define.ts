@@ -1,4 +1,4 @@
-import { createDefine } from "@fresh/core";
-import type { State } from "./state.ts";
+import { createDefine } from "fresh"
+import { State } from "./state.ts"
 
-export const define = createDefine<State>();
+export const define = createDefine<State>()

@@ -1,6 +1,7 @@
 services:
   db:
-    image: mariadb:11
+    # Same major version as production
+    image: mariadb:10.11.15-jammy
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: password
@@ -8,7 +9,9 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - type: volume
+        source: mariadb_data
+        target: /var/lib/mysql
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
@@ -16,14 +19,14 @@ services:
       retries: 5
 
   caddy:
-    image: caddy:2-alpine
+    image: caddy:2.10.2-alpine
     restart: unless-stopped
     ports:
       - "8080:8080"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-    depends_on:
-      - db
+      - type: bind
+        source: ./dev/caddy/
+        target: /etc/caddy/
 
 volumes:
   mariadb_data:
