@@ -1,0 +1,22 @@
+# Environment
+.env
+
+# Node modules (only used for drizzle-kit)
+node_modules/
+
+# Fresh build output
+_fresh/
+
+# Drizzle
+drizzle/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
