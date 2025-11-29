@@ -1,6 +1,15 @@
-#!/usr/bin/env -S deno run -A --watch=static/,routes/
+#!/usr/bin/env -S deno run -A --watch=static/,main.tsx
 
-import dev from "$fresh/dev.ts";
-import config from "./fresh.config.ts";
+import { Builder } from "@fresh/core/dev";
 
-await dev(import.meta.url, "./main.ts", config);
+const builder = new Builder();
+
+if (Deno.args.includes("build")) {
+  const { app } = await import("./main.tsx");
+  await builder.build(app);
+} else {
+  await builder.listen(async () => {
+    const { app } = await import("./main.tsx");
+    return app;
+  });
+}
