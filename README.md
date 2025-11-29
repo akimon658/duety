@@ -6,19 +6,19 @@ Tasksにタスクを追加するアプリケーション。
 ## 技術スタック
 
 - **Runtime**: Deno
-- **Framework**: Fresh
+- **Framework**: Fresh 2
 - **ORM**: Drizzle ORM
 - **Database**: MariaDB
-- **Frontend**: Preact + Tailwind CSS
+- **Frontend**: Preact + Tailwind CSS + daisyUI
 
 ## セットアップ
 
 ### 前提条件
 
-- Deno 1.40以上
-- MariaDB 10.6以上
+- Deno 2.0以上
+- Docker & Docker Compose（ローカル開発用）
 
-### インストール
+### Docker Composeでのローカル開発（推奨）
 
 1. リポジトリをクローン
 
@@ -31,22 +31,62 @@ cd duety
 
 ```bash
 cp .env.example .env
-# .envファイルを編集してデータベース接続情報を設定
 ```
 
-3. データベースを作成
+3. Docker Composeでサービスを起動
 
 ```bash
-mysql -u root -p -e "CREATE DATABASE duety;"
+docker compose up -d
 ```
 
-4. スキーマをプッシュ
+これにより以下のサービスが起動します：
+
+- **MariaDB**: `localhost:3306` - データベース
+- **Caddy**: `localhost:8080` -
+  リバースプロキシ（`X-Forwarded-User`ヘッダー付加）
+
+4. データベーススキーマをプッシュ
 
 ```bash
 deno task db:push
 ```
 
-### 開発サーバーの起動
+5. 開発サーバーを起動
+
+```bash
+deno task dev
+```
+
+6. ブラウザで `http://localhost:8080` にアクセス
+
+> **Note**:
+> Caddyを経由することで`X-Forwarded-User`ヘッダーが自動的に付加されます。
+> テストユーザー名を変更するには`Caddyfile`を編集してください。
+
+### 手動セットアップ
+
+MariaDBを別途インストールしている場合は、以下の手順でセットアップできます：
+
+1. 環境変数を設定
+
+```bash
+cp .env.example .env
+# .envファイルを編集してデータベース接続情報を設定
+```
+
+2. データベースを作成
+
+```bash
+mysql -u root -p -e "CREATE DATABASE duety;"
+```
+
+3. スキーマをプッシュ
+
+```bash
+deno task db:push
+```
+
+4. 開発サーバーを起動
 
 ```bash
 deno task dev
@@ -63,19 +103,22 @@ deno task start
 
 ```
 duety/
-├── components/     # 共有コンポーネント
 ├── db/            # データベーススキーマと接続
 ├── islands/       # クライアントサイドインタラクティブコンポーネント
 ├── lib/           # ユーティリティとサービス
-├── routes/        # ページとAPIルート
-│   └── api/       # APIエンドポイント
-└── static/        # 静的ファイル
+├── static/        # 静的ファイル
+├── compose.yaml   # Docker Compose設定
+├── Caddyfile      # Caddy設定（X-Forwarded-Userヘッダー付加）
+└── main.tsx       # アプリケーションエントリーポイント
 ```
 
 ## 認証
 
 このアプリケーションはプロキシサーバーでの認証を前提としています。
 `X-Forwarded-User`ヘッダーからユーザー名を取得し、存在しないユーザーは自動的に作成されます。
+
+ローカル開発ではCaddyが`X-Forwarded-User`ヘッダーを付加します。
+`Caddyfile`の`request_header X-Forwarded-User "testuser"`行を編集することでテストユーザーを変更できます。
 
 ## API
 

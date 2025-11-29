@@ -1,0 +1,11 @@
+# Caddy reverse proxy configuration for local development
+# Adds X-Forwarded-User header for authentication testing
+
+:8080 {
+	# Add X-Forwarded-User header with a test username
+	# Change this value to test different users
+	request_header X-Forwarded-User "testuser"
+
+	# Reverse proxy to the Deno Fresh app
+	reverse_proxy host.docker.internal:8000
+}
