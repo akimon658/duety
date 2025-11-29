@@ -41,7 +41,8 @@ export class GoogleTasksService implements ITaskService {
       if (this.credentials && this.credentials.expiresAt < Date.now()) {
         await this.refreshAccessToken();
       }
-    } catch {
+    } catch (error) {
+      console.error("Failed to initialize Google Tasks credentials:", error);
       this.credentials = null;
     }
   }
@@ -120,6 +121,10 @@ export class GoogleTasksService implements ITaskService {
 
     this.credentials.accessToken = data.access_token;
     this.credentials.expiresAt = Date.now() + data.expires_in * 1000;
+    // Update refresh token if a new one is provided by Google
+    if (data.refresh_token) {
+      this.credentials.refreshToken = data.refresh_token;
+    }
   }
 
   private getTaskListId(): string {

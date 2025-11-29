@@ -12,15 +12,9 @@ const getConnectionConfig = () => {
   };
 };
 
-let pool: mysql.Pool | null = null;
+// Initialize pool eagerly to avoid race conditions in concurrent requests
+const pool = mysql.createPool(getConnectionConfig());
 
-const getPool = () => {
-  if (!pool) {
-    pool = mysql.createPool(getConnectionConfig());
-  }
-  return pool;
-};
-
-export const db = drizzle(getPool(), { schema, mode: "default" });
+export const db = drizzle(pool, { schema, mode: "default" });
 
 export { schema };
