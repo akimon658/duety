@@ -40,7 +40,7 @@ export interface ITaskService {
    * @param credentials - Service-specific credentials
    * @param config - Service-specific configuration
    */
-  initialize(credentials: string, config?: string): Promise<void>;
+  initialize(credentials: string, config?: string): void | Promise<void>;
 
   /**
    * Check if the service is properly authenticated

@@ -1,6 +1,7 @@
 import type { ITaskService, SyncResult } from "./task-service.ts";
 import type { ParsedEvent } from "./ical.ts";
 import { taskServiceRegistry } from "./task-service.ts";
+import { google, type tasks_v1 } from "googleapis";
 
 interface GoogleCredentials {
   accessToken: string;
@@ -13,7 +14,7 @@ interface GoogleTasksConfig {
 }
 
 /**
- * Google Tasks implementation of ITaskService
+ * Google Tasks implementation of ITaskService using official googleapis client
  */
 export class GoogleTasksService implements ITaskService {
   readonly serviceType = "google_tasks";
@@ -21,6 +22,7 @@ export class GoogleTasksService implements ITaskService {
 
   private credentials: GoogleCredentials | null = null;
   private config: GoogleTasksConfig = {};
+  private tasksClient: tasks_v1.Tasks | null = null;
 
   private get clientId(): string {
     return Deno.env.get("GOOGLE_CLIENT_ID") || "";
@@ -30,142 +32,90 @@ export class GoogleTasksService implements ITaskService {
     return Deno.env.get("GOOGLE_CLIENT_SECRET") || "";
   }
 
-  async initialize(credentials: string, config?: string): Promise<void> {
+  private createOAuth2Client() {
+    return new google.auth.OAuth2(this.clientId, this.clientSecret);
+  }
+
+  initialize(credentials: string, config?: string): void {
     try {
       this.credentials = JSON.parse(credentials) as GoogleCredentials;
       if (config) {
         this.config = JSON.parse(config) as GoogleTasksConfig;
       }
 
-      // Refresh token if expired
-      if (this.credentials && this.credentials.expiresAt < Date.now()) {
-        await this.refreshAccessToken();
-      }
+      const oauth2Client = this.createOAuth2Client();
+      oauth2Client.setCredentials({
+        access_token: this.credentials.accessToken,
+        refresh_token: this.credentials.refreshToken,
+        expiry_date: this.credentials.expiresAt,
+      });
+
+      // Set up automatic token refresh
+      oauth2Client.on("tokens", (tokens) => {
+        if (this.credentials) {
+          if (tokens.access_token) {
+            this.credentials.accessToken = tokens.access_token;
+          }
+          if (tokens.refresh_token) {
+            this.credentials.refreshToken = tokens.refresh_token;
+          }
+          if (tokens.expiry_date) {
+            this.credentials.expiresAt = tokens.expiry_date;
+          }
+        }
+      });
+
+      this.tasksClient = google.tasks({ version: "v1", auth: oauth2Client });
     } catch (error) {
       console.error("Failed to initialize Google Tasks credentials:", error);
       this.credentials = null;
+      this.tasksClient = null;
     }
   }
 
   isAuthenticated(): boolean {
-    return this.credentials !== null && !!this.credentials.accessToken;
+    return this.credentials !== null && this.tasksClient !== null;
   }
 
   getAuthorizationUrl(redirectUri: string, state: string): string {
-    const params = new URLSearchParams({
-      client_id: this.clientId,
-      redirect_uri: redirectUri,
-      response_type: "code",
-      scope: "https://www.googleapis.com/auth/tasks",
+    const oauth2Client = this.createOAuth2Client();
+    return oauth2Client.generateAuthUrl({
       access_type: "offline",
-      prompt: "consent",
+      scope: ["https://www.googleapis.com/auth/tasks"],
+      redirect_uri: redirectUri,
       state,
+      prompt: "consent",
     });
-
-    return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
   }
 
   async exchangeCode(code: string, redirectUri: string): Promise<string> {
-    const response = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        client_id: this.clientId,
-        client_secret: this.clientSecret,
-        code,
-        grant_type: "authorization_code",
-        redirect_uri: redirectUri,
-      }),
-    });
+    const oauth2Client = this.createOAuth2Client();
+    oauth2Client.redirectUri = redirectUri;
 
-    if (!response.ok) {
-      throw new Error(`Failed to exchange code: ${response.statusText}`);
-    }
-
-    const data = await response.json();
+    const { tokens } = await oauth2Client.getToken(code);
 
     const credentials: GoogleCredentials = {
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-      expiresAt: Date.now() + data.expires_in * 1000,
+      accessToken: tokens.access_token || "",
+      refreshToken: tokens.refresh_token || "",
+      expiresAt: tokens.expiry_date || Date.now() + 3600 * 1000,
     };
 
     return JSON.stringify(credentials);
-  }
-
-  private async refreshAccessToken(): Promise<void> {
-    if (!this.credentials?.refreshToken) {
-      throw new Error("No refresh token available");
-    }
-
-    const response = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        client_id: this.clientId,
-        client_secret: this.clientSecret,
-        refresh_token: this.credentials.refreshToken,
-        grant_type: "refresh_token",
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to refresh token: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    this.credentials.accessToken = data.access_token;
-    this.credentials.expiresAt = Date.now() + data.expires_in * 1000;
-    // Update refresh token if a new one is provided by Google
-    if (data.refresh_token) {
-      this.credentials.refreshToken = data.refresh_token;
-    }
   }
 
   private getTaskListId(): string {
     return this.config.taskListId || "@default";
   }
 
-  private async apiRequest(
-    method: string,
-    endpoint: string,
-    body?: unknown,
-  ): Promise<Response> {
-    if (!this.credentials) {
-      throw new Error("Not authenticated");
-    }
-
-    // Refresh if token is about to expire (within 5 minutes)
-    if (this.credentials.expiresAt < Date.now() + 5 * 60 * 1000) {
-      await this.refreshAccessToken();
-    }
-
-    const url = `https://tasks.googleapis.com/tasks/v1${endpoint}`;
-    const options: RequestInit = {
-      method,
-      headers: {
-        Authorization: `Bearer ${this.credentials.accessToken}`,
-        "Content-Type": "application/json",
-      },
-    };
-
-    if (body) {
-      options.body = JSON.stringify(body);
-    }
-
-    return fetch(url, options);
-  }
-
   async createTask(event: ParsedEvent): Promise<SyncResult> {
+    if (!this.tasksClient) {
+      return { success: false, error: "Not authenticated" };
+    }
+
     try {
       const taskListId = this.getTaskListId();
 
-      const taskBody: Record<string, string> = {
+      const taskBody: tasks_v1.Schema$Task = {
         title: event.summary,
       };
 
@@ -174,23 +124,15 @@ export class GoogleTasksService implements ITaskService {
       }
 
       if (event.dueDate) {
-        // Google Tasks expects RFC 3339 timestamp for due date
         taskBody.due = event.dueDate.toISOString();
       }
 
-      const response = await this.apiRequest(
-        "POST",
-        `/lists/${taskListId}/tasks`,
-        taskBody,
-      );
+      const response = await this.tasksClient.tasks.insert({
+        tasklist: taskListId,
+        requestBody: taskBody,
+      });
 
-      if (!response.ok) {
-        const error = await response.text();
-        return { success: false, error };
-      }
-
-      const data = await response.json();
-      return { success: true, externalTaskId: data.id };
+      return { success: true, externalTaskId: response.data.id || undefined };
     } catch (error) {
       return {
         success: false,
@@ -203,10 +145,14 @@ export class GoogleTasksService implements ITaskService {
     externalTaskId: string,
     event: ParsedEvent,
   ): Promise<SyncResult> {
+    if (!this.tasksClient) {
+      return { success: false, error: "Not authenticated" };
+    }
+
     try {
       const taskListId = this.getTaskListId();
 
-      const taskBody: Record<string, string> = {
+      const taskBody: tasks_v1.Schema$Task = {
         title: event.summary,
       };
 
@@ -218,16 +164,11 @@ export class GoogleTasksService implements ITaskService {
         taskBody.due = event.dueDate.toISOString();
       }
 
-      const response = await this.apiRequest(
-        "PATCH",
-        `/lists/${taskListId}/tasks/${externalTaskId}`,
-        taskBody,
-      );
-
-      if (!response.ok) {
-        const error = await response.text();
-        return { success: false, error };
-      }
+      await this.tasksClient.tasks.patch({
+        tasklist: taskListId,
+        task: externalTaskId,
+        requestBody: taskBody,
+      });
 
       return { success: true, externalTaskId };
     } catch (error) {
@@ -239,18 +180,17 @@ export class GoogleTasksService implements ITaskService {
   }
 
   async deleteTask(externalTaskId: string): Promise<SyncResult> {
+    if (!this.tasksClient) {
+      return { success: false, error: "Not authenticated" };
+    }
+
     try {
       const taskListId = this.getTaskListId();
 
-      const response = await this.apiRequest(
-        "DELETE",
-        `/lists/${taskListId}/tasks/${externalTaskId}`,
-      );
-
-      if (!response.ok && response.status !== 204) {
-        const error = await response.text();
-        return { success: false, error };
-      }
+      await this.tasksClient.tasks.delete({
+        tasklist: taskListId,
+        task: externalTaskId,
+      });
 
       return { success: true };
     } catch (error) {
@@ -259,6 +199,13 @@ export class GoogleTasksService implements ITaskService {
         error: error instanceof Error ? error.message : "Unknown error",
       };
     }
+  }
+
+  /**
+   * Get the current credentials (for saving after token refresh)
+   */
+  getCredentials(): string | null {
+    return this.credentials ? JSON.stringify(this.credentials) : null;
   }
 }
 

@@ -5,24 +5,24 @@ export default function Layout(
   { Component, state }: PageProps<unknown, State>,
 ) {
   return (
-    <html lang="ja">
+    <html lang="ja" data-theme="light">
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Duety - Calendar to Tasks</title>
         <link rel="stylesheet" href="/styles.css" />
       </head>
-      <body class="bg-gray-100 min-h-screen">
-        <header class="bg-blue-600 text-white p-4 shadow-md">
-          <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Duety</h1>
-            {state.user && (
-              <span class="text-sm">
-                ログイン中: {state.user.username}
-              </span>
-            )}
+      <body class="min-h-screen bg-base-200">
+        <div class="navbar bg-primary text-primary-content shadow-lg">
+          <div class="flex-1">
+            <a class="btn btn-ghost text-xl">Duety</a>
           </div>
-        </header>
+          {state.user && (
+            <div class="flex-none">
+              <span class="text-sm">ログイン中: {state.user.username}</span>
+            </div>
+          )}
+        </div>
         <main class="container mx-auto p-4">
           <Component />
         </main>

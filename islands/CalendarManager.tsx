@@ -92,13 +92,10 @@ export default function CalendarManager({ initialCalendars }: Props) {
   return (
     <div>
       {/* Add Calendar Form */}
-      <form onSubmit={handleAddCalendar} class="mb-6 space-y-4">
-        <div>
-          <label
-            htmlFor="url"
-            class="block text-sm font-medium text-gray-700 mb-1"
-          >
-            カレンダーURL *
+      <form onSubmit={handleAddCalendar} class="space-y-4">
+        <div class="form-control w-full">
+          <label class="label" htmlFor="url">
+            <span class="label-text">カレンダーURL *</span>
           </label>
           <input
             id="url"
@@ -108,16 +105,14 @@ export default function CalendarManager({ initialCalendars }: Props) {
               e,
             ) => (newUrl.value = (e.target as HTMLInputElement).value)}
             placeholder="https://example.com/calendar.ics"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="input input-bordered w-full"
             required
           />
         </div>
-        <div>
-          <label
-            htmlFor="name"
-            class="block text-sm font-medium text-gray-700 mb-1"
-          >
-            表示名（任意）
+
+        <div class="form-control w-full">
+          <label class="label" htmlFor="name">
+            <span class="label-text">表示名（任意）</span>
           </label>
           <input
             id="name"
@@ -127,49 +122,70 @@ export default function CalendarManager({ initialCalendars }: Props) {
               e,
             ) => (newName.value = (e.target as HTMLInputElement).value)}
             placeholder="例: 後期授業課題"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="input input-bordered w-full"
           />
         </div>
 
-        {error.value && <div class="text-red-600 text-sm">{error.value}</div>}
+        {error.value && (
+          <div class="alert alert-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="stroke-current shrink-0 h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{error.value}</span>
+          </div>
+        )}
 
         <button
           type="submit"
           disabled={isLoading.value}
-          class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          class={`btn btn-primary w-full ${isLoading.value ? "loading" : ""}`}
         >
           {isLoading.value ? "追加中..." : "カレンダーを追加"}
         </button>
       </form>
 
+      <div class="divider"></div>
+
       {/* Calendar List */}
-      <div class="space-y-3">
-        <h3 class="text-lg font-medium text-gray-900">登録済みカレンダー</h3>
+      <div>
+        <h3 class="text-lg font-semibold mb-3">登録済みカレンダー</h3>
 
         {calendars.value.length === 0
           ? (
-            <p class="text-gray-500 text-sm">
+            <div class="text-base-content/50 text-sm">
               登録されているカレンダーはありません
-            </p>
+            </div>
           )
           : (
             <ul class="space-y-2">
               {calendars.value.map((calendar) => (
                 <li
                   key={calendar.id}
-                  class="flex items-center justify-between p-3 bg-gray-50 rounded-md"
+                  class="flex items-center justify-between p-3 bg-base-200 rounded-lg"
                 >
                   <div class="flex-1 min-w-0">
-                    <p class="font-medium text-gray-900 truncate">
+                    <p class="font-medium truncate">
                       {calendar.name || "名称未設定"}
                     </p>
-                    <p class="text-sm text-gray-500 truncate">{calendar.url}</p>
+                    <p class="text-sm text-base-content/60 truncate">
+                      {calendar.url}
+                    </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleDeleteCalendar(calendar.id)}
                     disabled={isLoading.value}
-                    class="ml-4 text-red-600 hover:text-red-800 disabled:opacity-50"
+                    class="btn btn-ghost btn-sm text-error ml-2"
                     title="削除"
                   >
                     <svg

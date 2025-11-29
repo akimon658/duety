@@ -31,10 +31,12 @@
     "mysql2": "npm:mysql2@^3.11.0",
     "mysql2/promise": "npm:mysql2@^3.11.0/promise",
     "ical.js": "npm:ical.js@^2.1.0",
+    "googleapis": "npm:googleapis@^144.0.0",
     "@/": "./",
     "tailwindcss": "npm:tailwindcss@3.4.1",
     "tailwindcss/": "npm:tailwindcss@3.4.1/",
-    "tailwindcss/plugin": "npm:tailwindcss@3.4.1/plugin.js"
+    "tailwindcss/plugin": "npm:tailwindcss@3.4.1/plugin.js",
+    "daisyui": "npm:daisyui@^4.12.0"
   },
   "exclude": ["**/_fresh/*", "node_modules"]
 }

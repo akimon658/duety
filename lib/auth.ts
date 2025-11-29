@@ -1,6 +1,6 @@
 import { db } from "@/db/index.ts";
 import { users } from "@/db/schema.ts";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{1,32}$/;
 
@@ -15,6 +15,7 @@ export function isValidUsername(username: string): boolean {
 
 /**
  * Gets or creates a user from the X-Forwarded-User header
+ * Uses INSERT ... ON DUPLICATE KEY UPDATE to avoid race conditions
  * @param request - The incoming request
  * @returns The user object or null if no valid username
  */
@@ -25,21 +26,16 @@ export async function getOrCreateUser(request: Request) {
     return null;
   }
 
-  // Try to find existing user
-  const existingUser = await db.query.users.findFirst({
+  // Use INSERT ... ON DUPLICATE KEY UPDATE to atomically create or update
+  // This prevents race conditions when multiple requests try to create the same user
+  await db.insert(users).values({ username }).onDuplicateKeyUpdate({
+    set: { username: sql`username` },
+  });
+
+  // Now fetch the user (guaranteed to exist)
+  const user = await db.query.users.findFirst({
     where: eq(users.username, username),
   });
 
-  if (existingUser) {
-    return existingUser;
-  }
-
-  // Create new user if doesn't exist
-  await db.insert(users).values({ username });
-
-  const newUser = await db.query.users.findFirst({
-    where: eq(users.username, username),
-  });
-
-  return newUser;
+  return user;
 }
