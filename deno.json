@@ -24,7 +24,6 @@
   "imports": {
     "@/": "./",
     "@fresh/core": "jsr:@fresh/core@^2.2.0",
-    "@fresh/core/dev": "jsr:@fresh/core@^2.2.0/dev",
     "@fresh/plugin-tailwind": "jsr:@fresh/plugin-tailwind@^1.0.0",
     "preact": "npm:preact@^10.27.2",
     "preact/jsx-runtime": "npm:preact@^10.27.2/jsx-runtime",
@@ -39,9 +38,7 @@
     "googleapis": "npm:googleapis@^166.0.0",
     "ical.js": "npm:ical.js@^2.2.1",
     "mysql2": "npm:mysql2@^3.15.3",
-    "mysql2/promise": "npm:mysql2@^3.15.3/promise",
-    "tailwindcss": "npm:tailwindcss@^3.4.17",
-    "tailwindcss/plugin": "npm:tailwindcss@^3.4.17/plugin.js"
+    "tailwindcss": "npm:tailwindcss@^3.4.17"
   },
   "exclude": [
     "**/_fresh/*",
