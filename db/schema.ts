@@ -16,7 +16,8 @@ export const calendars = mysqlTable("calendars", {
   id: varchar("id", { length: 36 }).primaryKey(), // UUID
   username: varchar("username", { length: 32 })
     .notNull()
-    .references(() => users.username, { onDelete: "cascade" }),
+    .references(() => users.username, { onDelete: "cascade" })
+    .unique(),
   url: text("url").notNull(),
   name: varchar("name", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),

@@ -7,11 +7,11 @@ interface Calendar {
 }
 
 interface Props {
-  initialCalendars: Calendar[]
+  initialCalendar: Calendar
 }
 
-export const CalendarManager = ({ initialCalendars }: Props) => {
-  const calendars = useSignal<Calendar[]>(initialCalendars)
+export const CalendarManager = ({ initialCalendar }: Props) => {
+  const calendars = useSignal<Calendar | undefined>(initialCalendar)
   const newUrl = useSignal("")
   const newName = useSignal("")
   const isLoading = useSignal(false)
@@ -53,7 +53,7 @@ export const CalendarManager = ({ initialCalendars }: Props) => {
       }
 
       const newCalendar = await response.json()
-      calendars.value = [...calendars.value, newCalendar]
+      calendars.value = newCalendar
       newUrl.value = ""
       newName.value = ""
     } catch (err) {
@@ -80,7 +80,7 @@ export const CalendarManager = ({ initialCalendars }: Props) => {
         throw new Error("カレンダーの削除に失敗しました")
       }
 
-      calendars.value = calendars.value.filter((c) => c.id !== id)
+      calendars.value = undefined
     } catch (err) {
       error.value = err instanceof Error ? err.message : "エラーが発生しました"
     } finally {
@@ -157,50 +157,43 @@ export const CalendarManager = ({ initialCalendars }: Props) => {
       <div>
         <h3 class="text-lg font-semibold mb-3">登録済みカレンダー</h3>
 
-        {calendars.value.length === 0
+        {!calendars.value
           ? (
             <div class="text-base-content/50 text-sm">
               登録されているカレンダーはありません
             </div>
           )
           : (
-            <ul class="space-y-2">
-              {calendars.value.map((calendar) => (
-                <li
-                  key={calendar.id}
-                  class="flex items-center justify-between p-3 bg-base-200 rounded-lg"
+            <>
+              <div class="flex-1 min-w-0">
+                <p class="font-medium truncate">
+                  {calendars.value.name || "名称未設定"}
+                </p>
+                <p class="text-sm text-base-content/60 truncate">
+                  {calendars.value.url}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleDeleteCalendar(calendars.value.id)}
+                disabled={isLoading.value}
+                class="btn btn-ghost btn-sm text-error ml-2"
+                title="削除"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
-                  <div class="flex-1 min-w-0">
-                    <p class="font-medium truncate">
-                      {calendar.name || "名称未設定"}
-                    </p>
-                    <p class="text-sm text-base-content/60 truncate">
-                      {calendar.url}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteCalendar(calendar.id)}
-                    disabled={isLoading.value}
-                    class="btn btn-ghost btn-sm text-error ml-2"
-                    title="削除"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </li>
-              ))}
-            </ul>
+                  <path
+                    fillRule="evenodd"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </>
           )}
       </div>
     </div>

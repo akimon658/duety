@@ -7,11 +7,11 @@ import { define } from "../lib/define.ts"
 
 export const handler = define.handlers({
   GET: async (ctx) => {
-    const userCalenders = await db.query.calendars.findMany({
+    const userCalender = await db.query.calendars.findFirst({
       where: eq(calendars.username, ctx.state.user.username),
     })
 
-    return page({ userCalenders })
+    return page({ userCalender })
   },
 })
 
@@ -26,7 +26,8 @@ export default define.page<typeof handler>(({ data }) => {
             課題の期限が自動的にGoogle Tasksに追加されます。
           </p>
           <div class="divider"></div>
-          <CalendarManager initialCalendars={data.userCalenders} />
+
+          <CalendarManager initialCalendar={data.userCalender} />
         </div>
       </div>
     </div>
