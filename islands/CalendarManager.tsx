@@ -1,4 +1,5 @@
 import { useSignal } from "@preact/signals"
+import { CircleCheck, Trash } from "lucide-preact"
 import { createContext } from "preact"
 import { useContext } from "preact/hooks"
 
@@ -91,7 +92,7 @@ const RegisteredCalendarManager = () => {
   return (
     <div>
       <div class="alert" role="alert">
-        <div>✅️</div>
+        <CircleCheck class="stroke-success" />
 
         <span class="flex-1">URLが登録されています</span>
 
@@ -103,6 +104,7 @@ const RegisteredCalendarManager = () => {
           onClick={onDelete}
           type="button"
         >
+          <Trash class="size-[1.2em]" />
           削除
         </button>
       </div>

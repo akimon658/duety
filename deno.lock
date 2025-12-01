@@ -44,6 +44,7 @@
     "npm:esbuild@~0.25.5": "0.25.7",
     "npm:googleapis@166": "166.0.0",
     "npm:ical.js@^2.2.1": "2.2.1",
+    "npm:lucide-preact@0.555": "0.555.0_preact@10.27.2",
     "npm:mysql2@^3.15.3": "3.15.3",
     "npm:preact-render-to-string@^6.6.3": "6.6.3_preact@10.27.2",
     "npm:preact@^10.27.0": "10.27.2",
@@ -1498,6 +1499,12 @@
     "lru.min@1.1.3": {
       "integrity": "sha512-Lkk/vx6ak3rYkRR0Nhu4lFUT2VDnQSxBe8Hbl7f36358p6ow8Bnvr8lrLt98H8J1aGxfhbX4Fs5tYg2+FTwr5Q=="
     },
+    "lucide-preact@0.555.0_preact@10.27.2": {
+      "integrity": "sha512-NcVrZL6iMRNhEXrqDRGFLL6fL5shDKc2v3wSazuG/E973qf/0zCSfHxUqk8f5oNrUgrPjUUnOZeQneVfaej5aw==",
+      "dependencies": [
+        "preact"
+      ]
+    },
     "magic-string@0.30.21": {
       "integrity": "sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==",
       "dependencies": [
@@ -1842,6 +1849,7 @@
       "npm:drizzle-orm@~0.44.7",
       "npm:googleapis@166",
       "npm:ical.js@^2.2.1",
+      "npm:lucide-preact@0.555",
       "npm:mysql2@^3.15.3",
       "npm:preact@^10.27.2",
       "npm:tailwindcss@^4.1.10",

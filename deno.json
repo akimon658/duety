@@ -43,6 +43,7 @@
     "fresh": "jsr:@fresh/core@^2.2.0",
     "googleapis": "npm:googleapis@^166.0.0",
     "ical.js": "npm:ical.js@^2.2.1",
+    "lucide-preact": "npm:lucide-preact@^0.555.0",
     "mysql2": "npm:mysql2@^3.15.3",
     "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.5.0",
