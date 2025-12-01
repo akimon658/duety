@@ -1,4 +1,4 @@
 :8080 {
-	request_header X-Forwarded-User "testuser"
+	request_header X-Forwarded-User "akimo"
 	reverse_proxy host.docker.internal:5173
 }
