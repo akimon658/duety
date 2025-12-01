@@ -36,6 +36,7 @@
   },
   "imports": {
     "@/": "./",
+    "@std/uuid": "jsr:@std/uuid@^1.0.9",
     "daisyui": "npm:daisyui@^5.5.5",
     "drizzle-kit": "npm:drizzle-kit@^0.31.7",
     "drizzle-orm": "npm:drizzle-orm@^0.44.7",

@@ -1,7 +1,8 @@
+import { generate } from "@std/uuid/unstable-v7"
+import { and, eq } from "drizzle-orm"
 import { db } from "../../../db/index.ts"
 import { calendars } from "../../../db/schema.ts"
 import { define } from "../../../lib/define.ts"
-import { and, eq } from "drizzle-orm"
 
 export const handler = define.handlers({
   GET: async (ctx) => {
@@ -42,7 +43,7 @@ export const handler = define.handlers({
         )
       }
 
-      const id = crypto.randomUUID()
+      const id = generate()
 
       await db.insert(calendars).values({
         id,
