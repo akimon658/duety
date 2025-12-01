@@ -19,7 +19,6 @@ export const calendars = mysqlTable("calendars", {
     .references(() => users.username, { onDelete: "cascade" })
     .unique(),
   url: text("url").notNull(),
-  name: varchar("name", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 })

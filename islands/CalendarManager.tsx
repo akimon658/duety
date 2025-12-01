@@ -3,17 +3,15 @@ import { useSignal } from "@preact/signals"
 interface Calendar {
   id: string
   url: string
-  name?: string
 }
 
 interface Props {
-  initialCalendar: Calendar
+  initialCalendar?: Calendar
 }
 
 export const CalendarManager = ({ initialCalendar }: Props) => {
-  const calendars = useSignal<Calendar | undefined>(initialCalendar)
+  const calendar = useSignal<Calendar | undefined>(initialCalendar)
   const newUrl = useSignal("")
-  const newName = useSignal("")
   const isLoading = useSignal(false)
   const error = useSignal("")
 
@@ -43,7 +41,6 @@ export const CalendarManager = ({ initialCalendar }: Props) => {
         },
         body: JSON.stringify({
           url: newUrl.value,
-          name: newName.value || null,
         }),
       })
 
@@ -53,9 +50,8 @@ export const CalendarManager = ({ initialCalendar }: Props) => {
       }
 
       const newCalendar = await response.json()
-      calendars.value = newCalendar
+      calendar.value = newCalendar
       newUrl.value = ""
-      newName.value = ""
     } catch (err) {
       error.value = err instanceof Error ? err.message : "エラーが発生しました"
     } finally {
@@ -80,7 +76,7 @@ export const CalendarManager = ({ initialCalendar }: Props) => {
         throw new Error("カレンダーの削除に失敗しました")
       }
 
-      calendars.value = undefined
+      calendar.value = undefined
     } catch (err) {
       error.value = err instanceof Error ? err.message : "エラーが発生しました"
     } finally {
@@ -105,22 +101,6 @@ export const CalendarManager = ({ initialCalendar }: Props) => {
             placeholder="https://example.com/calendar.ics"
             class="input input-bordered w-full"
             required
-          />
-        </div>
-
-        <div class="form-control w-full">
-          <label class="label" htmlFor="name">
-            <span class="label-text">表示名（任意）</span>
-          </label>
-          <input
-            id="name"
-            type="text"
-            value={newName.value}
-            onInput={(
-              e,
-            ) => (newName.value = (e.target as HTMLInputElement).value)}
-            placeholder="例: 後期授業課題"
-            class="input input-bordered w-full"
           />
         </div>
 
@@ -157,43 +137,33 @@ export const CalendarManager = ({ initialCalendar }: Props) => {
       <div>
         <h3 class="text-lg font-semibold mb-3">登録済みカレンダー</h3>
 
-        {!calendars.value
+        {!calendar.value
           ? (
             <div class="text-base-content/50 text-sm">
               登録されているカレンダーはありません
             </div>
           )
           : (
-            <>
-              <div class="flex-1 min-w-0">
-                <p class="font-medium truncate">
-                  {calendars.value.name || "名称未設定"}
-                </p>
-                <p class="text-sm text-base-content/60 truncate">
-                  {calendars.value.url}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleDeleteCalendar(calendars.value.id)}
-                disabled={isLoading.value}
-                class="btn btn-ghost btn-sm text-error ml-2"
-                title="削除"
+            <button
+              type="button"
+              onClick={() => handleDeleteCalendar(calendar.value.id)}
+              disabled={isLoading.value}
+              class="btn btn-ghost btn-sm text-error ml-2"
+              title="削除"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            </>
+                <path
+                  fillRule="evenodd"
+                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
           )}
       </div>
     </div>
