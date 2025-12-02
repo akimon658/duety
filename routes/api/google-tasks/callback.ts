@@ -5,6 +5,8 @@ import { googleTasksAccounts } from "../../../db/schema.ts"
 import { define } from "../../../lib/define.ts"
 import { GoogleTasksService } from "../../../services/googleTasks.ts"
 
+const ENABLED = "true"
+
 export const handler = define.handlers({
   GET: async (ctx) => {
     const url = new URL(ctx.req.url)
@@ -37,7 +39,7 @@ export const handler = define.handlers({
           .update(googleTasksAccounts)
           .set({
             credentials,
-            enabled: "true",
+            enabled: ENABLED,
             updatedAt: new Date(),
           })
           .where(eq(googleTasksAccounts.id, existing.id))
@@ -47,7 +49,7 @@ export const handler = define.handlers({
           id: v4.generate(),
           username: ctx.state.user.username,
           credentials,
-          enabled: "true",
+          enabled: ENABLED,
         })
       }
 
