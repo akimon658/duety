@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm"
 import { page } from "fresh"
 import { db } from "../db/index.ts"
 import { calendars } from "../db/schema.ts"
+import { AccountManager } from "../islands/AccountManager.tsx"
 import { CalendarManager } from "../islands/CalendarManager.tsx"
 import { define } from "../lib/define.ts"
 
@@ -26,6 +27,14 @@ export default define.page<typeof handler>(({ data }) => {
             大学のLMSから取得したカレンダーのURLを登録すると、自動で課題の期限をGoogle
             ToDoリストに同期します。
           </p>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="card-title">アカウント管理</h2>
+
+          <AccountManager />
         </div>
       </div>
 
