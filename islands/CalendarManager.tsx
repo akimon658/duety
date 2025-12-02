@@ -58,13 +58,11 @@ const AddCalendarForm = () => {
         />
 
         <button
-          class={`btn btn-primary mt-2 ${
-            isLoading.value ? "loading loading-spinner" : ""
-          }`}
+          class="btn btn-primary mt-2"
           disabled={!url.value || isLoading.value}
           type="submit"
         >
-          {!isLoading.value && "登録"}
+          {isLoading.value ? <span class="loading loading-spinner" /> : "登録"}
         </button>
       </fieldset>
     </form>
@@ -133,14 +131,14 @@ const RegisteredCalendarManager = () => {
               <button class="btn btn-outline" type="submit">閉じる</button>
 
               <button
-                class={`btn btn-error ${
-                  isDeleting.value ? "loading loading-spinner" : ""
-                }`}
+                class="btn btn-error"
                 disabled={isDeleting.value}
                 onClick={onDelete}
                 type="button"
               >
-                解除
+                {isDeleting.value
+                  ? <span class="loading loading-spinner" />
+                  : "解除"}
               </button>
             </form>
           </div>
