@@ -1,4 +1,4 @@
-import { v4 } from "@std/uuid"
+import { generate } from "@std/uuid/unstable-v7"
 import { eq } from "drizzle-orm"
 import { db } from "../../../db/index.ts"
 import { googleTasksAccounts } from "../../../db/schema.ts"
@@ -46,7 +46,7 @@ export const handler = define.handlers({
       } else {
         // Create new account
         await db.insert(googleTasksAccounts).values({
-          id: v4.generate(),
+          id: generate(),
           username: ctx.state.user.username,
           credentials,
           enabled: ENABLED,

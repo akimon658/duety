@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm"
 import { page } from "fresh"
 import { db } from "../db/index.ts"
-import { calendars } from "../db/schema.ts"
+import { calendars, googleTasksAccounts } from "../db/schema.ts"
 import { AccountManager } from "../islands/AccountManager.tsx"
 import { CalendarManager } from "../islands/CalendarManager.tsx"
 import { define } from "../lib/define.ts"
@@ -12,7 +12,11 @@ export const handler = define.handlers({
       where: eq(calendars.username, ctx.state.user.username),
     })
 
-    return page({ userCalender })
+    const userAccount = await db.query.googleTasksAccounts.findFirst({
+      where: eq(googleTasksAccounts.username, ctx.state.user.username),
+    })
+
+    return page({ userCalender, userAccount })
   },
 })
 
@@ -32,17 +36,17 @@ export default define.page<typeof handler>(({ data }) => {
 
       <div class="card shadow-sm">
         <div class="card-body">
-          <h2 class="card-title">アカウント管理</h2>
+          <h2 class="card-title">カレンダー管理</h2>
 
-          <AccountManager />
+          <CalendarManager initialCalendar={data.userCalender} />
         </div>
       </div>
 
       <div class="card shadow-sm">
         <div class="card-body">
-          <h2 class="card-title">カレンダー管理</h2>
+          <h2 class="card-title">アカウント管理</h2>
 
-          <CalendarManager initialCalendar={data.userCalender} />
+          <AccountManager initialAccount={data.userAccount} />
         </div>
       </div>
     </main>

@@ -23,7 +23,7 @@ export const calendars = mysqlTable("calendars", {
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 })
 
-export const googleTasksAccounts = mysqlTable("task_services", {
+export const googleTasksAccounts = mysqlTable("google_tasks_accounts", {
   id: varchar("id", { length: 36 }).primaryKey(), // UUID
   username: varchar("username", { length: 32 })
     .notNull()
