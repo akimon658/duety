@@ -11,7 +11,7 @@ export default define.page(({ Component, state }) => {
 
       <body>
         <header className="max-w-2xl mx-auto navbar">
-          <div className="flex-1 text-xl">Duety</div>
+          <h1 className="flex-1 font-semibold text-xl">Duety</h1>
 
           <div className="flex gap-2 items-center">
             <div>{state.user.username}</div>

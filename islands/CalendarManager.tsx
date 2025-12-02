@@ -40,32 +40,38 @@ const AddCalendarForm = () => {
   }
 
   return (
-    <form onSubmit={onSubmit}>
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend">カレンダーを登録</legend>
+    <>
+      <p>まだカレンダーが登録されていません。</p>
 
-        <label class="label" htmlFor="calendar-url">カレンダーURL</label>
+      <form onSubmit={onSubmit}>
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">カレンダーを登録</legend>
 
-        <input
-          class="input w-full"
-          id="calendar-url"
-          onInput={(e) => {
-            url.value = e.currentTarget.value
-          }}
-          placeholder="https://lms.s.isct.ac.jp/2025/calendar/export_execute.php?userid=xxx&authtoken=xxx&preset_what=all&preset_time=recentupcoming"
-          required
-          type="url"
-        />
+          <label class="label" htmlFor="calendar-url">カレンダーURL</label>
 
-        <button
-          class="btn btn-primary mt-2"
-          disabled={!url.value || isLoading.value}
-          type="submit"
-        >
-          {isLoading.value ? <span class="loading loading-spinner" /> : "登録"}
-        </button>
-      </fieldset>
-    </form>
+          <input
+            class="input w-full"
+            id="calendar-url"
+            onInput={(e) => {
+              url.value = e.currentTarget.value
+            }}
+            placeholder="https://lms.s.isct.ac.jp/2025/calendar/export_execute.php?userid=xxx&authtoken=xxx&preset_what=all&preset_time=recentupcoming"
+            required
+            type="url"
+          />
+
+          <button
+            class="btn btn-primary mt-2"
+            disabled={!url.value || isLoading.value}
+            type="submit"
+          >
+            {isLoading.value
+              ? <span class="loading loading-spinner" />
+              : "登録"}
+          </button>
+        </fieldset>
+      </form>
+    </>
   )
 }
 
@@ -96,7 +102,7 @@ const RegisteredCalendarManager = () => {
 
   return (
     <>
-      <div class="alert" role="alert">
+      <div class="alert alert-soft alert-success" role="alert">
         <CircleCheck class="stroke-success" />
 
         <span>カレンダーのURLが登録されています</span>

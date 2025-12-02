@@ -17,19 +17,25 @@ export const handler = define.handlers({
 
 export default define.page<typeof handler>(({ data }) => {
   return (
-    <div class="max-w-2xl mx-auto">
-      <div class="card bg-base-100 shadow-xl">
+    <main class="mx-auto max-w-2xl p-2 space-y-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="card-title">このサービスについて</h2>
+
+          <p>
+            大学のLMSから取得したカレンダーのURLを登録すると、自動で課題の期限をGoogle
+            ToDoリストに同期します。
+          </p>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
         <div class="card-body">
           <h2 class="card-title">カレンダー管理</h2>
-          <p class="text-base-content/70">
-            大学のLMS（Moodle）から取得したiCalカレンダーのURLを登録すると、
-            課題の期限が自動的にGoogle Tasksに追加されます。
-          </p>
-          <div class="divider"></div>
 
           <CalendarManager initialCalendar={data.userCalender} />
         </div>
       </div>
-    </div>
+    </main>
   )
 })
