@@ -1,5 +1,5 @@
 import { useSignal } from "@preact/signals"
-import { CircleCheck, Trash } from "lucide-preact"
+import { CircleCheck, Unlink, X } from "lucide-preact"
 import { createContext } from "preact"
 import { useContext } from "preact/hooks"
 
@@ -88,27 +88,69 @@ const RegisteredCalendarManager = () => {
 
     isDeleting.value = false
   }
+  const openDeleteModal = () => {
+    const dialog = document.getElementById(
+      "delete-calendar-modal",
+    ) as HTMLDialogElement
+
+    dialog?.showModal()
+  }
 
   return (
-    <div>
+    <>
       <div class="alert" role="alert">
         <CircleCheck class="stroke-success" />
 
-        <span class="flex-1">URLが登録されています</span>
+        <span>カレンダーのURLが登録されています</span>
 
         <button
-          class={`btn btn-error btn-outline btn-sm ${
-            isDeleting.value ? "loading loading-spinner" : ""
-          }`}
-          disabled={isDeleting.value}
-          onClick={onDelete}
+          class="btn btn-error btn-outline btn-sm"
+          onClick={openDeleteModal}
           type="button"
         >
-          <Trash class="size-[1.2em]" />
-          削除
+          <Unlink class="size-[1.2em]" />
+          解除
         </button>
       </div>
-    </div>
+
+      <dialog id="delete-calendar-modal" class="modal">
+        <div class="modal-box">
+          <form method="dialog">
+            <button
+              class="absolute btn btn-circle btn-ghost btn-sm right-2 top-2"
+              type="submit"
+            >
+              <X />
+            </button>
+          </form>
+
+          <h3 class="font-bold text-lg">登録解除</h3>
+
+          <p class="py-4">カレンダーの登録を解除します。よろしいですか？</p>
+
+          <div class="modal-action">
+            <form class="flex gap-2" method="dialog">
+              <button class="btn btn-outline" type="submit">閉じる</button>
+
+              <button
+                class={`btn btn-error ${
+                  isDeleting.value ? "loading loading-spinner" : ""
+                }`}
+                disabled={isDeleting.value}
+                onClick={onDelete}
+                type="button"
+              >
+                解除
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <form class="modal-backdrop" method="dialog">
+          <button type="submit">閉じる</button>
+        </form>
+      </dialog>
+    </>
   )
 }
 
