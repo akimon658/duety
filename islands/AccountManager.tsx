@@ -3,14 +3,14 @@ import { CircleCheck, LogIn, Unlink, X } from "lucide-preact"
 import { createContext } from "preact"
 import { useContext } from "preact/hooks"
 
-interface GoogleTasksAccount {
+interface GoogleAccount {
   id: string
   username: string
 }
 
 const AccountContext = createContext<{
-  account: GoogleTasksAccount | undefined
-  setAccount: (account: GoogleTasksAccount | undefined) => void
+  account: GoogleAccount | undefined
+  setAccount: (account: GoogleAccount | undefined) => void
 }>({
   account: undefined,
   setAccount: () => {},
@@ -122,18 +122,18 @@ const DisconnectedAccountManager = () => {
 
       <button class="btn btn-primary mt-2" onClick={handleConnect} type="button">
         <LogIn class="size-[1.2em]" />
-        Googleアカウントで接続
+        Googleアカウントに接続
       </button>
     </div>
   )
 }
 
 interface Props {
-  initialAccount?: GoogleTasksAccount
+  initialAccount?: GoogleAccount
 }
 
 export const AccountManager = ({ initialAccount }: Props) => {
-  const account = useSignal<GoogleTasksAccount | undefined>(initialAccount)
+  const account = useSignal(initialAccount)
 
   return (
     <AccountContext.Provider

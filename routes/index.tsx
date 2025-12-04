@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm"
 import { page } from "fresh"
 import { db } from "../db/index.ts"
-import { calendars, googleTasksAccounts } from "../db/schema.ts"
+import { calendars, googleAccounts } from "../db/schema.ts"
 import { AccountManager } from "../islands/AccountManager.tsx"
 import { CalendarManager } from "../islands/CalendarManager.tsx"
 import { define } from "../lib/define.ts"
@@ -12,8 +12,8 @@ export const handler = define.handlers({
       where: eq(calendars.username, ctx.state.user.username),
     })
 
-    const userAccount = await db.query.googleTasksAccounts.findFirst({
-      where: eq(googleTasksAccounts.username, ctx.state.user.username),
+    const userAccount = await db.query.googleAccounts.findFirst({
+      where: eq(googleAccounts.username, ctx.state.user.username),
     })
 
     return page({ userCalender, userAccount })

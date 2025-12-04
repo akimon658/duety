@@ -1,11 +1,9 @@
 import { generate } from "@std/uuid/unstable-v7"
 import { eq } from "drizzle-orm"
 import { db } from "../../../db/index.ts"
-import { googleTasksAccounts } from "../../../db/schema.ts"
+import { googleAccounts } from "../../../db/schema.ts"
 import { define } from "../../../lib/define.ts"
 import { GoogleTasksService } from "../../../services/googleTasks.ts"
-
-const ENABLED = "true"
 
 export const handler = define.handlers({
   GET: async (ctx) => {
@@ -29,27 +27,25 @@ export const handler = define.handlers({
       const credentials = await service.exchangeCode(code, redirectUri)
 
       // Check if account already exists
-      const existing = await db.query.googleTasksAccounts.findFirst({
-        where: eq(googleTasksAccounts.username, ctx.state.user.username),
+      const existing = await db.query.googleAccounts.findFirst({
+        where: eq(googleAccounts.username, ctx.state.user.username),
       })
 
       if (existing) {
         // Update existing account
         await db
-          .update(googleTasksAccounts)
+          .update(googleAccounts)
           .set({
             credentials,
-            enabled: ENABLED,
             updatedAt: new Date(),
           })
-          .where(eq(googleTasksAccounts.id, existing.id))
+          .where(eq(googleAccounts.id, existing.id))
       } else {
         // Create new account
-        await db.insert(googleTasksAccounts).values({
+        await db.insert(googleAccounts).values({
           id: generate(),
           username: ctx.state.user.username,
           credentials,
-          enabled: ENABLED,
         })
       }
 
