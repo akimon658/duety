@@ -163,7 +163,7 @@ interface Props {
 }
 
 export const CalendarManager = ({ initialCalendar }: Props) => {
-  const calendar = useSignal<Calendar | undefined>(initialCalendar)
+  const calendar = useSignal(initialCalendar)
 
   return (
     <CalendarContext.Provider

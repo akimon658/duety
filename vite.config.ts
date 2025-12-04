@@ -5,6 +5,6 @@ import { defineConfig } from "vite"
 export default defineConfig({
   plugins: [fresh(), tailwindcss()],
   ssr: {
-    external: ["mysql2"],
+    external: ["mysql2", "googleapis"],
   },
 })
