@@ -9,7 +9,7 @@ import { define } from "../lib/define.ts"
 
 export const handler = define.handlers({
   GET: async (ctx) => {
-    const userCalender = await db.query.calendars.findFirst({
+    const userCalendar = await db.query.calendars.findFirst({
       where: eq(calendars.username, ctx.state.user.username),
     })
 
@@ -17,7 +17,7 @@ export const handler = define.handlers({
       where: eq(googleAccounts.username, ctx.state.user.username),
     })
 
-    return page({ userCalender, userAccount })
+    return page({ userCalendar, userAccount })
   },
 })
 
@@ -39,7 +39,7 @@ export default define.page<typeof handler>(({ data }) => {
         <div class="card-body">
           <h2 class="card-title">カレンダー管理</h2>
 
-          <CalendarManager initialCalendar={data.userCalender} />
+          <CalendarManager initialCalendar={data.userCalendar} />
         </div>
       </div>
 
@@ -56,7 +56,7 @@ export default define.page<typeof handler>(({ data }) => {
           <h2 class="card-title">タスク同期</h2>
 
           <SyncManager
-            hasCalendar={!!data.userCalender}
+            hasCalendar={!!data.userCalendar}
             hasAccount={!!data.userAccount}
           />
         </div>

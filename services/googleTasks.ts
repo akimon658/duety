@@ -206,6 +206,14 @@ export class GoogleTasksService implements ITaskService {
   getCredentials(): string | null {
     return this.credentials ? JSON.stringify(this.credentials) : null
   }
+
+  /**
+   * Get updated credentials after potential token refresh
+   * Returns null if credentials haven't changed
+   */
+  getUpdatedCredentials(): string | null {
+    return this.getCredentials()
+  }
 }
 
 taskServiceRegistry.register("google_tasks", GoogleTasksService)

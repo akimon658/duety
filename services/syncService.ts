@@ -2,7 +2,6 @@ import { and, eq } from "drizzle-orm"
 import { db } from "../db/index.ts"
 import { calendars, googleAccounts, syncedEvents } from "../db/schema.ts"
 import { fetchAndParseIcal, ParsedEvent } from "../lib/ical.ts"
-import { GoogleTasksService } from "./googleTasks.ts"
 import { taskServiceRegistry } from "./taskService.ts"
 
 export interface SyncStats {
@@ -197,8 +196,8 @@ export async function syncUserTasks(username: string): Promise<SyncStats> {
     }
 
     // Update credentials if they were refreshed
-    if (taskService instanceof GoogleTasksService) {
-      const updatedCredentials = taskService.getCredentials()
+    if (taskService.getUpdatedCredentials) {
+      const updatedCredentials = taskService.getUpdatedCredentials()
       if (
         updatedCredentials && updatedCredentials !== googleAccount.credentials
       ) {

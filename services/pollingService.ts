@@ -8,6 +8,7 @@ interface PollingServiceConfig {
 class PollingService {
   private intervalId: number | null = null
   private isRunning = false
+  private isSyncing = false
   private config: PollingServiceConfig = {
     intervalMinutes: 60, // Default: poll every hour
     enabled: false,
@@ -66,6 +67,17 @@ class PollingService {
   }
 
   private async runSync() {
+    // Prevent overlapping sync operations
+    if (this.isSyncing) {
+      console.log(
+        `[${
+          new Date().toISOString()
+        }] Skipping sync - previous sync still in progress`,
+      )
+      return
+    }
+
+    this.isSyncing = true
     console.log(`[${new Date().toISOString()}] Starting scheduled sync...`)
 
     try {
@@ -84,6 +96,8 @@ class PollingService {
       }
     } catch (error) {
       console.error("Error during scheduled sync:", error)
+    } finally {
+      this.isSyncing = false
     }
   }
 

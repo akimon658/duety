@@ -70,6 +70,12 @@ export interface ITaskService {
    * Exchange authorization code for credentials
    */
   exchangeCode?: (code: string, redirectUri: string) => Promise<string>
+
+  /**
+   * Get updated credentials after potential token refresh
+   * Returns null if credentials haven't changed
+   */
+  getUpdatedCredentials?: () => string | null
 }
 
 /**
