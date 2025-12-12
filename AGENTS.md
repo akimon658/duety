@@ -11,7 +11,7 @@ This service synchronizes assignment information from a university LMS calendar 
 - Authentication is handled via a proxy server.
 - Local development uses Caddy to replicate the authentication flow.
 
-## Coding Agent Guidelines
+## Guidelines
 
 When working on issues in this repository, please follow these guidelines to keep PRs minimal:
 
