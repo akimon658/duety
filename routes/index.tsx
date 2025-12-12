@@ -4,12 +4,11 @@ import { db } from "../db/index.ts"
 import { calendars, googleAccounts } from "../db/schema.ts"
 import { AccountManager } from "../islands/AccountManager.tsx"
 import { CalendarManager } from "../islands/CalendarManager.tsx"
-import { SyncManager } from "../islands/SyncManager.tsx"
 import { define } from "../lib/define.ts"
 
 export const handler = define.handlers({
   GET: async (ctx) => {
-    const userCalendar = await db.query.calendars.findFirst({
+    const userCalender = await db.query.calendars.findFirst({
       where: eq(calendars.username, ctx.state.user.username),
     })
 
@@ -17,7 +16,7 @@ export const handler = define.handlers({
       where: eq(googleAccounts.username, ctx.state.user.username),
     })
 
-    return page({ userCalendar, userAccount })
+    return page({ userCalender, userAccount })
   },
 })
 
@@ -39,7 +38,7 @@ export default define.page<typeof handler>(({ data }) => {
         <div class="card-body">
           <h2 class="card-title">カレンダー管理</h2>
 
-          <CalendarManager initialCalendar={data.userCalendar} />
+          <CalendarManager initialCalendar={data.userCalender} />
         </div>
       </div>
 
@@ -48,17 +47,6 @@ export default define.page<typeof handler>(({ data }) => {
           <h2 class="card-title">アカウント管理</h2>
 
           <AccountManager initialAccount={data.userAccount} />
-        </div>
-      </div>
-
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h2 class="card-title">タスク同期</h2>
-
-          <SyncManager
-            hasCalendar={!!data.userCalendar}
-            hasAccount={!!data.userAccount}
-          />
         </div>
       </div>
     </main>

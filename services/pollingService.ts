@@ -2,7 +2,6 @@ import { syncAllUsers } from "./syncService.ts"
 
 interface PollingServiceConfig {
   intervalMinutes: number
-  enabled: boolean
 }
 
 class PollingService {
@@ -11,7 +10,6 @@ class PollingService {
   private isSyncing = false
   private config: PollingServiceConfig = {
     intervalMinutes: 60, // Default: poll every hour
-    enabled: false,
   }
 
   constructor() {
@@ -20,24 +18,15 @@ class PollingService {
       Deno.env.get("SYNC_INTERVAL_MINUTES") || "60",
       10,
     )
-    const enabled = Deno.env.get("SYNC_POLLING_ENABLED") === "true"
 
     this.config = {
       intervalMinutes: isNaN(intervalMinutes) ? 60 : intervalMinutes,
-      enabled,
     }
   }
 
   start() {
     if (this.isRunning) {
       console.log("Polling service is already running")
-      return
-    }
-
-    if (!this.config.enabled) {
-      console.log(
-        "Polling service is disabled. Set SYNC_POLLING_ENABLED=true to enable",
-      )
       return
     }
 
