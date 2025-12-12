@@ -4,6 +4,7 @@ import { db } from "../db/index.ts"
 import { calendars, googleAccounts } from "../db/schema.ts"
 import { AccountManager } from "../islands/AccountManager.tsx"
 import { CalendarManager } from "../islands/CalendarManager.tsx"
+import { SyncManager } from "../islands/SyncManager.tsx"
 import { define } from "../lib/define.ts"
 
 export const handler = define.handlers({
@@ -47,6 +48,17 @@ export default define.page<typeof handler>(({ data }) => {
           <h2 class="card-title">アカウント管理</h2>
 
           <AccountManager initialAccount={data.userAccount} />
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="card-title">タスク同期</h2>
+
+          <SyncManager
+            hasCalendar={!!data.userCalender}
+            hasAccount={!!data.userAccount}
+          />
         </div>
       </div>
     </main>
