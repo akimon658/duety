@@ -43,7 +43,13 @@ export const SyncManager = ({ hasCalendar, hasAccount }: Props) => {
       console.error("Sync request error:", error)
       lastSyncResult.value = {
         success: false,
-        stats: { created: 0, updated: 0, deleted: 0, errors: 1, errorMessages: [] },
+        stats: {
+          created: 0,
+          updated: 0,
+          deleted: 0,
+          errors: 1,
+          errorMessages: [],
+        },
         error: error instanceof Error ? error.message : "Unknown error",
       }
     } finally {
@@ -66,17 +72,19 @@ export const SyncManager = ({ hasCalendar, hasAccount }: Props) => {
           onClick={handleSync}
           type="button"
         >
-          {isSyncing.value ? (
-            <>
-              <span class="loading loading-spinner" />
-              同期中...
-            </>
-          ) : (
-            <>
-              <RefreshCw class="size-[1.2em]" />
-              同期を実行
-            </>
-          )}
+          {isSyncing.value
+            ? (
+              <>
+                <span class="loading loading-spinner" />
+                同期中...
+              </>
+            )
+            : (
+              <>
+                <RefreshCw class="size-[1.2em]" />
+                同期を実行
+              </>
+            )}
         </button>
 
         {!canSync && (
@@ -88,7 +96,9 @@ export const SyncManager = ({ hasCalendar, hasAccount }: Props) => {
 
       {lastSyncResult.value && (
         <div
-          class={`alert ${lastSyncResult.value.success ? "alert-success" : "alert-error"}`}
+          class={`alert ${
+            lastSyncResult.value.success ? "alert-success" : "alert-error"
+          }`}
           role="alert"
         >
           <div class="flex-col items-start gap-2">

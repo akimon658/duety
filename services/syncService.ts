@@ -74,7 +74,9 @@ export async function syncUserTasks(username: string): Promise<SyncStats> {
     } catch (error) {
       stats.errors++
       stats.errorMessages.push(
-        `Failed to fetch calendar: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `Failed to fetch calendar: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
       )
       return stats
     }
@@ -150,7 +152,9 @@ export async function syncUserTasks(username: string): Promise<SyncStats> {
       } catch (error) {
         stats.errors++
         stats.errorMessages.push(
-          `Error processing event ${event.uid}: ${error instanceof Error ? error.message : "Unknown error"}`,
+          `Error processing event ${event.uid}: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`,
         )
       }
     }
@@ -184,7 +188,9 @@ export async function syncUserTasks(username: string): Promise<SyncStats> {
         } catch (error) {
           stats.errors++
           stats.errorMessages.push(
-            `Error deleting task for event ${eventUid}: ${error instanceof Error ? error.message : "Unknown error"}`,
+            `Error deleting task for event ${eventUid}: ${
+              error instanceof Error ? error.message : "Unknown error"
+            }`,
           )
         }
       }
@@ -193,7 +199,9 @@ export async function syncUserTasks(username: string): Promise<SyncStats> {
     // Update credentials if they were refreshed
     if (taskService instanceof GoogleTasksService) {
       const updatedCredentials = taskService.getCredentials()
-      if (updatedCredentials && updatedCredentials !== googleAccount.credentials) {
+      if (
+        updatedCredentials && updatedCredentials !== googleAccount.credentials
+      ) {
         await db
           .update(googleAccounts)
           .set({
@@ -208,7 +216,9 @@ export async function syncUserTasks(username: string): Promise<SyncStats> {
   } catch (error) {
     stats.errors++
     stats.errorMessages.push(
-      `Unexpected error during sync: ${error instanceof Error ? error.message : "Unknown error"}`,
+      `Unexpected error during sync: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
     )
     return stats
   }

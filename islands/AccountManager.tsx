@@ -120,7 +120,11 @@ const DisconnectedAccountManager = () => {
     <div>
       <p>Googleアカウントに接続していません。</p>
 
-      <button class="btn btn-primary mt-2" onClick={handleConnect} type="button">
+      <button
+        class="btn btn-primary mt-2"
+        onClick={handleConnect}
+        type="button"
+      >
         <LogIn class="size-[1.2em]" />
         Googleアカウントに接続
       </button>
@@ -144,7 +148,9 @@ export const AccountManager = ({ initialAccount }: Props) => {
         },
       }}
     >
-      {account.value ? <ConnectedAccountManager /> : <DisconnectedAccountManager />}
+      {account.value
+        ? <ConnectedAccountManager />
+        : <DisconnectedAccountManager />}
     </AccountContext.Provider>
   )
 }

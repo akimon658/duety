@@ -34,7 +34,9 @@ class PollingService {
     }
 
     if (!this.config.enabled) {
-      console.log("Polling service is disabled. Set SYNC_POLLING_ENABLED=true to enable")
+      console.log(
+        "Polling service is disabled. Set SYNC_POLLING_ENABLED=true to enable",
+      )
       return
     }
 
@@ -72,7 +74,9 @@ class PollingService {
       console.log(`Sync completed for ${results.size} users`)
 
       for (const [username, stats] of results) {
-        console.log(`  ${username}: created=${stats.created}, updated=${stats.updated}, deleted=${stats.deleted}, errors=${stats.errors}`)
+        console.log(
+          `  ${username}: created=${stats.created}, updated=${stats.updated}, deleted=${stats.deleted}, errors=${stats.errors}`,
+        )
 
         if (stats.errorMessages.length > 0) {
           console.error(`  Errors for ${username}:`, stats.errorMessages)

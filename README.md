@@ -1,6 +1,7 @@
 # Duety
 
-This service synchronizes assignment information from a university LMS calendar URL to Google Tasks.
+This service synchronizes assignment information from a university LMS calendar
+URL to Google Tasks.
 
 ## Tech Stack
 
@@ -68,13 +69,16 @@ This will watch the project directory and restart as necessary.
 **Manual Sync**: Users can trigger synchronization manually from the UI
 
 **Automatic Sync**: Enable periodic polling by setting:
+
 ```bash
 SYNC_POLLING_ENABLED=true
 SYNC_INTERVAL_MINUTES=60  # Poll every 60 minutes
 ```
 
-The polling service runs in the background and syncs all users' calendars at the specified interval.
+The polling service runs in the background and syncs all users' calendars at the
+specified interval.
 
 ## Authentication
 
-Authentication is handled via a proxy server. Local development uses Caddy to replicate the authentication flow.
+Authentication is handled via a proxy server. Local development uses Caddy to
+replicate the authentication flow.
