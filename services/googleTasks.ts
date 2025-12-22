@@ -1,6 +1,6 @@
 import { google, tasks_v1 } from "googleapis"
 import { ParsedEvent } from "../lib/ical.ts"
-import { ITaskService, SyncResult, taskServiceRegistry } from "./taskService.ts"
+import { ITaskService, SyncResult } from "./taskService.ts"
 
 interface GoogleCredentials {
   accessToken: string
@@ -206,6 +206,19 @@ export class GoogleTasksService implements ITaskService {
   getCredentials(): string | null {
     return this.credentials ? JSON.stringify(this.credentials) : null
   }
+
+  /**
+   * Get updated credentials after potential token refresh
+   * Returns null if credentials haven't changed
+   */
+  getUpdatedCredentials(): string | null {
+    return this.getCredentials()
+  }
 }
 
-taskServiceRegistry.register("google_tasks", GoogleTasksService)
+/**
+ * Create a new Google Tasks service instance
+ */
+export function createTaskService(): ITaskService {
+  return new GoogleTasksService()
+}

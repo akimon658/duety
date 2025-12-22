@@ -70,45 +70,10 @@ export interface ITaskService {
    * Exchange authorization code for credentials
    */
   exchangeCode?: (code: string, redirectUri: string) => Promise<string>
+
+  /**
+   * Get updated credentials after potential token refresh
+   * Returns null if credentials haven't changed
+   */
+  getUpdatedCredentials?: () => string | null
 }
-
-/**
- * Registry for task service implementations
- */
-export class TaskServiceRegistry {
-  private services: Map<string, new () => ITaskService> = new Map()
-
-  /**
-   * Register a task service implementation
-   * @param serviceType - Unique identifier for the service type
-   * @param serviceClass - Class constructor for the service
-   */
-  register(serviceType: string, serviceClass: new () => ITaskService) {
-    this.services.set(serviceType, serviceClass)
-  }
-
-  /**
-   * Create an instance of a registered service
-   * @param serviceType - Service type to instantiate
-   * @returns New instance of the service or undefined if not registered
-   */
-  create(serviceType: string) {
-    const ServiceClass = this.services.get(serviceType)
-
-    if (ServiceClass) {
-      return new ServiceClass()
-    }
-
-    return undefined
-  }
-
-  /**
-   * Get all registered service types
-   */
-  getRegisteredTypes() {
-    return Array.from(this.services.keys())
-  }
-}
-
-// Global registry instance
-export const taskServiceRegistry = new TaskServiceRegistry()

@@ -1,6 +1,7 @@
 # Duety
 
-This service synchronizes assignment information from a university LMS calendar URL to Google Tasks.
+This service synchronizes assignment information from a university LMS calendar
+URL to Google Tasks.
 
 ## Tech Stack
 
