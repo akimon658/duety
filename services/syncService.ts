@@ -2,9 +2,7 @@ import { and, eq } from "drizzle-orm"
 import { db } from "../db/index.ts"
 import { calendars, googleAccounts, syncedEvents } from "../db/schema.ts"
 import { fetchAndParseIcal, ParsedEvent } from "../lib/ical.ts"
-import { taskServiceRegistry } from "./taskService.ts"
-// Import to ensure GoogleTasksService registration runs
-import "./googleTasks.ts"
+import { createTaskService } from "./googleTasks.ts"
 
 export interface SyncStats {
   created: number
@@ -50,12 +48,7 @@ export async function syncUserTasks(username: string): Promise<SyncStats> {
     }
 
     // Initialize Google Tasks service
-    const taskService = taskServiceRegistry.create("google_tasks")
-    if (!taskService) {
-      stats.errors++
-      stats.errorMessages.push("Failed to initialize Google Tasks service")
-      return stats
-    }
+    const taskService = createTaskService()
 
     taskService.initialize(
       googleAccount.credentials,
