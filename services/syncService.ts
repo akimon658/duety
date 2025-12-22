@@ -3,6 +3,8 @@ import { db } from "../db/index.ts"
 import { calendars, googleAccounts, syncedEvents } from "../db/schema.ts"
 import { fetchAndParseIcal, ParsedEvent } from "../lib/ical.ts"
 import { taskServiceRegistry } from "./taskService.ts"
+// Import to ensure GoogleTasksService registration runs
+import "./googleTasks.ts"
 
 export interface SyncStats {
   created: number
